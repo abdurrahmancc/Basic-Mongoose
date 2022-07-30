@@ -1,10 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const todoHandler = require("./routerHandler/todoHandler");
-const user = require("./routerHandler/user");
+const userHandler = require("./routerHandler/userHandler");
+const dotenv = require("dotenv");
 
 // express app initialization
 const app = express();
+dotenv.config();
 app.use(express.json());
 
 //database connection with mongoose
@@ -19,14 +21,16 @@ mongoose
 
 // application routes
 app.use("/todo", todoHandler);
-app.use("/", user);
+app.use("/user", userHandler);
 
-function errorHandler(err, req, res, next) {
+const errorHandler = (err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
   }
   res.status(500).json({ error: err });
-}
+};
+
+app.use(errorHandler);
 
 app.listen(5000, () => {
   console.log("app listening at port 5000");
